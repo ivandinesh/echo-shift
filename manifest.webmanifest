@@ -1,0 +1,10 @@
+{
+  "name": "ECHO SHIFT",
+  "short_name": "ECHO SHIFT",
+  "description": "Your last move comes back.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07070a",
+  "theme_color": "#07070a",
+  "icons": []
+}
