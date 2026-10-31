@@ -2,57 +2,156 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#07070a" />
-  <meta name="description" content="ECHO SHIFT — a minimalist puzzle game where your last move comes back." />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="theme-color" content="#07090d" />
+  <meta name="description" content="ECHO SHIFT — a minimalist delayed-move puzzle game. Your last move comes back." />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="ECHO SHIFT" />
   <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/icon-192.svg" />
   <link rel="stylesheet" href="/styles.css" />
-  <title>ECHO SHIFT — your last move comes back.</title>
+  <title>ECHO SHIFT — Your last move comes back.</title>
 </head>
 <body>
-  <div class="noise" aria-hidden="true"></div>
-  <main class="shell">
-    <nav class="topbar">
-      <a class="brand" href="#" aria-label="Echo Shift home"><span class="brand-dot"></span>ECHO SHIFT</a>
-      <span class="status">PRE-ALPHA // COOKING</span>
-    </nav>
-
-    <section class="hero">
-      <div class="copy">
-        <p class="eyebrow">SOLO PUZZLE // 2-TURN DELAY // ZERO CHILL</p>
-        <h1>Your last move<br><span>comes back.</span></h1>
-        <p class="lede">Move the bright mote now. Your ghost copies you two turns later. Get both home without getting cooked by your own decisions.</p>
-        <div class="actions">
-          <button class="primary" data-hook="play-teaser">ENTER THE LOOP <span>→</span></button>
-          <button class="ghost" data-hook="notify">PING ME AT LAUNCH</button>
-        </div>
-        <div class="microcopy"><span>5×5 brain damage</span><span>•</span><span>offline-first</span><span>•</span><span>no account</span></div>
+  <div class="ambient" aria-hidden="true"></div>
+  <div id="app" class="app-shell">
+    <header class="app-header">
+      <button class="brand-button" id="homeBtn" aria-label="Go to home">
+        <span class="brand-mark"><i></i><i></i></span>
+        <span>ECHO SHIFT</span>
+      </button>
+      <div class="header-actions">
+        <span class="save-state" id="saveState">LOCAL // SAVED</span>
+        <button class="icon-button" id="settingsBtn" aria-label="Open settings">⌁</button>
       </div>
+    </header>
 
-      <div class="game-card" aria-label="Animated Echo Shift game preview">
-        <div class="card-head"><span>SHIFT_001</span><span class="live">LIVE THOUGHT</span></div>
-        <div class="board" id="board" role="img" aria-label="5 by 5 preview grid with a bright player mote and delayed echo mote"></div>
-        <div class="queue">
-          <span>NEXT ECHO</span><strong id="echoMove">↑</strong>
-          <span>YOUR INPUT</span><strong id="playerMove">→</strong>
+    <main>
+      <section class="screen home-screen active" id="homeScreen" aria-labelledby="homeTitle">
+        <div class="home-hero">
+          <div>
+            <p class="kicker">ONE INPUT. TWO TIMELINES.</p>
+            <h1 id="homeTitle">Your last move<br><span>comes back.</span></h1>
+            <p class="hero-copy">Move now. Your echo repeats what you did two turns ago. Guide both motes home without getting outplayed by your past self.</p>
+          </div>
+          <div class="hero-orbit" aria-hidden="true">
+            <div class="orbit-grid"></div>
+            <div class="orbit-player"></div>
+            <div class="orbit-echo"></div>
+            <div class="orbit-ring ring-a"></div>
+            <div class="orbit-ring ring-b"></div>
+          </div>
         </div>
-        <div class="controls" aria-hidden="true"><span>WASD</span><span>ARROWS</span><span>SWIPE</span><span>UNDO</span></div>
+
+        <div class="mode-grid" role="list" aria-label="Game modes">
+          <button class="mode-card featured" data-mode="learn" role="listitem">
+            <span class="mode-index">01</span><span class="mode-badge">START HERE</span>
+            <h2>Learn</h2><p>Six tiny shifts. Understand the delay by playing, not reading.</p>
+            <span class="mode-meta" id="learnMeta">0 / 6 cleared</span>
+          </button>
+          <button class="mode-card" data-mode="journey" role="listitem">
+            <span class="mode-index">02</span>
+            <h2>Journey</h2><p>Thirty verified puzzles that bend the same simple rule.</p>
+            <span class="mode-meta" id="journeyMeta">0 / 30 cleared</span>
+          </button>
+          <button class="mode-card daily" data-mode="daily" role="listitem">
+            <span class="mode-index">03</span><span class="mode-badge" id="dailyBadge">TODAY</span>
+            <h2>Daily Shift</h2><p>Same puzzle for the whole day. No streak guilt. Just a clean solve.</p>
+            <span class="mode-meta" id="dailyMeta">unsolved today</span>
+          </button>
+          <button class="mode-card" data-mode="flow" role="listitem">
+            <span class="mode-index">04</span>
+            <h2>Flow</h2><p>An endless local shuffle. Clear one, immediately get the next.</p>
+            <span class="mode-meta" id="flowMeta">best run 0</span>
+          </button>
+        </div>
+
+        <div class="home-stats" aria-label="Local player stats">
+          <div><strong id="statSolved">0</strong><span>shifts cleared</span></div>
+          <div><strong id="statMoves">0</strong><span>moves played</span></div>
+          <div><strong id="statBest">—</strong><span>best solve</span></div>
+        </div>
+      </section>
+
+      <section class="screen game-screen" id="gameScreen" aria-labelledby="levelTitle">
+        <div class="game-topline">
+          <button class="back-button" id="backBtn">← MODES</button>
+          <div class="level-heading">
+            <span id="modeLabel">LEARN</span>
+            <h1 id="levelTitle">FIRST ECHO</h1>
+          </div>
+          <div class="turn-chip"><span>TURN</span><strong id="turnCount">0</strong></div>
+        </div>
+
+        <div class="game-layout">
+          <aside class="game-info">
+            <p class="eyebrow" id="levelEyebrow">SHIFT 01 / 30</p>
+            <h2 id="levelPrompt">Move the bright mote. Your echo waits two turns.</h2>
+            <p id="levelHint">Use arrows, WASD, swipe, or the controls below.</p>
+            <div class="echo-queue" aria-label="Echo timing preview">
+              <div><span>2 AGO</span><strong id="queueOlder">·</strong></div>
+              <div><span>1 AGO</span><strong id="queueRecent">·</strong></div>
+              <div class="next"><span>NEXT ECHO</span><strong id="nextEcho">·</strong></div>
+            </div>
+            <div class="legend">
+              <span><i class="legend-dot player-dot"></i>you</span>
+              <span><i class="legend-dot echo-dot"></i>echo</span>
+              <span><i class="legend-exit"></i>exits</span>
+            </div>
+          </aside>
+
+          <div class="board-wrap" id="boardWrap">
+            <div id="board" class="board" role="grid" aria-label="Echo Shift game board"></div>
+            <div class="completion-flare" id="completionFlare" aria-hidden="true"></div>
+          </div>
+
+          <aside class="game-actions">
+            <div class="move-pad" aria-label="Move controls">
+              <button data-dir="U" aria-label="Move up">↑</button>
+              <button data-dir="L" aria-label="Move left">←</button>
+              <button data-dir="D" aria-label="Move down">↓</button>
+              <button data-dir="R" aria-label="Move right">→</button>
+            </div>
+            <div class="utility-actions">
+              <button id="undoBtn">↶ Undo</button>
+              <button id="restartBtn">↺ Restart</button>
+            </div>
+            <p class="input-note">WASD · ARROWS · SWIPE</p>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer"><span>NO ACCOUNT · OFFLINE READY</span><span>YOUR PAST SELF IS THE BOSS FIGHT</span></footer>
+  </div>
+
+  <div class="modal-backdrop" id="resultModal" hidden>
+    <section class="result-card" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+      <p class="kicker">SHIFT COMPLETE</p>
+      <h2 id="resultTitle">Past you finally cooperated.</h2>
+      <div class="result-score"><strong id="resultMoves">0</strong><span>MOVES</span></div>
+      <p id="resultBest">New personal best.</p>
+      <div class="result-actions">
+        <button class="primary-button" id="nextBtn">NEXT SHIFT →</button>
+        <button class="secondary-button" id="shareBtn">SHARE RESULT</button>
+        <button class="text-button" id="resultHomeBtn">BACK TO MODES</button>
       </div>
     </section>
+  </div>
 
-    <section class="marquee" aria-label="Game features">
-      <div class="marquee-track"><span>DELAYED ECHO</span><span>✦</span><span>DAILY SHIFT</span><span>✦</span><span>FLOW MODE</span><span>✦</span><span>NO STREAK GUILT</span><span>✦</span><span>DELAYED ECHO</span><span>✦</span><span>DAILY SHIFT</span><span>✦</span><span>FLOW MODE</span><span>✦</span><span>NO STREAK GUILT</span></div>
-    </section>
-
-    <section class="manifesto">
-      <div><span>01</span><h2>MOVE NOW</h2><p>You pick one direction. Bright mote moves instantly.</p></div>
-      <div><span>02</span><h2>GET HAUNTED</h2><p>The echo repeats what you did exactly two turns ago.</p></div>
-      <div><span>03</span><h2>LOCK IN</h2><p>Route both motes to their exits. Minimal moves. Maximum aura.</p></div>
-    </section>
-
-    <footer><span>ECHO SHIFT © 2026</span><span>made for one-more-run energy</span></footer>
-  </main>
+  <aside class="settings-panel" id="settingsPanel" aria-hidden="true">
+    <div class="settings-head"><div><p class="kicker">SYSTEM</p><h2>Settings</h2></div><button class="icon-button" id="settingsClose" aria-label="Close settings">×</button></div>
+    <label class="setting-row"><span><strong>Sound</strong><small>tiny synth feedback</small></span><input id="soundToggle" type="checkbox" checked /></label>
+    <label class="setting-row"><span><strong>Motion</strong><small>movement + ambient effects</small></span><input id="motionToggle" type="checkbox" checked /></label>
+    <label class="setting-row"><span><strong>Haptics</strong><small>supported mobile devices</small></span><input id="hapticsToggle" type="checkbox" checked /></label>
+    <button class="danger-button" id="resetProgressBtn">RESET LOCAL PROGRESS</button>
+    <p class="settings-note">Everything lives on this device. No account. No cloud requirement. No analytics by default.</p>
+  </aside>
+  <div class="panel-scrim" id="panelScrim" hidden></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
   <script src="/app.js"></script>
 </body>
 </html>
