@@ -1,63 +1,53 @@
-const board = document.querySelector('#board');
-const echoMove = document.querySelector('#echoMove');
-const playerMove = document.querySelector('#playerMove');
-const toast = document.querySelector('#toast');
-
-const walls = new Set(['1,1','1,3','2,1','3,3']);
-const exits = new Set(['0,4','4,0']);
-const moves = [
-  {p:[0,1],e:[0,0],pm:'→',em:'·'},
-  {p:[0,2],e:[0,0],pm:'↓',em:'·'},
-  {p:[1,2],e:[0,1],pm:'↓',em:'→'},
-  {p:[2,2],e:[0,1],pm:'→',em:'↓'},
-  {p:[2,3],e:[1,1],pm:'↓',em:'↓'},
-  {p:[3,3],e:[1,2],pm:'←',em:'→'},
-  {p:[3,2],e:[2,2],pm:'↓',em:'↓'},
-  {p:[4,2],e:[2,3],pm:'←',em:'←'}
+const $=(s,r=document)=>r.querySelector(s);const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const DIRS={U:[-1,0],D:[1,0],L:[0,-1],R:[0,1]};const GLYPH={U:'↑',D:'↓',L:'←',R:'→'};const STORE='echo-shift-v1';
+const recipes=[
+'RRDDLLUU','DDRRUULL','RDRDLLUU','DRRDLULU','RRDLLDRU','DDRURULL','RURDDLLU','DRURDLLU','RRDDLUUL','DDRRULLU',
+'RDRRDLUL','DRDDRUUL','RRULDDLU','DDLUURRU','RURDDLUL','DLD RRUUU'.replaceAll(' ',''),'RRDDLLUR','DDRRUULR','RDLDRUUL','DRURDLLL',
+'RRDLDURU','DDRUURDL','RURDLDDL','DLDRRUUU','RRDDULUL','DRRULDDL','RDLURDDL','DRDLURRU','RRDULLDR','DDRLUURR'
 ];
-
-for (let r=0;r<5;r++) {
-  for (let c=0;c<5;c++) {
-    const cell = document.createElement('div');
-    cell.className = 'cell';
-    cell.dataset.pos = `${r},${c}`;
-    if (walls.has(`${r},${c}`)) cell.classList.add('wall');
-    if (exits.has(`${r},${c}`)) cell.classList.add('exit');
-    board.appendChild(cell);
-  }
-}
-
-function render(step) {
-  board.querySelectorAll('.mote,.echo').forEach(el => el.remove());
-  const frame = moves[step % moves.length];
-  const pCell = board.querySelector(`[data-pos="${frame.p[0]},${frame.p[1]}"]`);
-  const eCell = board.querySelector(`[data-pos="${frame.e[0]},${frame.e[1]}"]`);
-  pCell?.append(Object.assign(document.createElement('div'), {className:'mote'}));
-  eCell?.append(Object.assign(document.createElement('div'), {className:'echo'}));
-  playerMove.textContent = frame.pm;
-  echoMove.textContent = frame.em;
-}
-
-let step = 0;
-render(step);
-const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-if (!reducedMotion) setInterval(() => render(++step), 850);
-
-function showToast(message) {
-  toast.textContent = message;
-  toast.classList.add('show');
-  clearTimeout(window.__echoToast);
-  window.__echoToast = setTimeout(() => toast.classList.remove('show'), 1700);
-}
-
-document.querySelector('[data-hook="play-teaser"]').addEventListener('click', () => {
-  showToast('demo shift loading soon // stay locked in');
-});
-
-document.querySelector('[data-hook="notify"]').addEventListener('click', () => {
-  showToast('launch hook armed // email capture next');
-});
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
-}
+const starts=[[1,1,3,1],[1,2,3,2],[2,1,2,3],[1,3,3,1],[2,2,3,2],[1,1,3,3]];
+const tutorial=[
+['First Echo','Move the bright mote. Your echo waits two turns.','Make any two moves. On move three, watch your first input return.'],
+['Two Timelines','Now plan for where the echo will be, not where it is.','The NEXT ECHO box tells you what your ghost will do after your next input.'],
+['Walls Remember','Walls stop a mote, but the input still enters the echo queue.','A blocked move can be useful: you spend a turn without changing one position.'],
+['Split Thinking','Your input acts on two different positions at two different times.','Think in directions, not paths. Past directions are future consequences.'],
+['Meet the Exits','Bright goes to lime. Echo goes to cyan.','Both must be home at the same time. Reaching one exit early is allowed.'],
+['You Got This','No timer. Undo freely. Find the clean line.','From here, Journey opens up thirty verified shifts.']
+];
+function clamp(n){return Math.max(0,Math.min(4,n))}function posKey(p){return p.join(',')}function same(a,b){return a[0]===b[0]&&a[1]===b[1]}
+function stepPos(pos,dir,walls){const d=DIRS[dir],next=[clamp(pos[0]+d[0]),clamp(pos[1]+d[1])];return walls.has(posKey(next))?pos:next}
+function simulate(startP,startE,seq){let p=[...startP],e=[...startE],q=[],visited=new Set([posKey(p),posKey(e)]);for(const dir of seq){p=stepPos(p,dir,new Set());const ed=q.length>=2?q[q.length-2]:null;if(ed)e=stepPos(e,ed,new Set());q.push(dir);visited.add(posKey(p));visited.add(posKey(e))}return{p,e,visited}}
+function makeLevel(i){const tuple=starts[i%starts.length],startP=[tuple[0],tuple[1]],startE=[tuple[2],tuple[3]],seq=recipes[i%recipes.length].split('');const solved=simulate(startP,startE,seq);const protectedCells=new Set([...solved.visited,posKey(solved.p),posKey(solved.e),posKey(startP),posKey(startE)]);const walls=[];for(let r=0;r<5;r++)for(let c=0;c<5;c++){const key=`${r},${c}`;if(!protectedCells.has(key)&&((r*7+c*11+i*5)%9<2))walls.push([r,c])}return{id:i+1,name:i<6?tutorial[i][0]:['PARALLAX','AFTERIMAGE','GHOST NOTE','PHASE LINE','ECHO CHAMBER','DELAY FIELD'][i%6]+' '+String(i+1).padStart(2,'0'),prompt:i<6?tutorial[i][1]:'Route both motes home. The queue is the puzzle.',hint:i<6?tutorial[i][2]:'Use undo aggressively. Clean solves come from reading the next echo.',startP,startE,exitP:solved.p,exitE:solved.e,walls,solution:seq,par:seq.length}}
+const LEVELS=Array.from({length:30},(_,i)=>makeLevel(i));
+const defaultSave={solved:{},best:{},moves:0,flowBest:0,flowRun:0,dailyDate:'',dailySolved:false,settings:{sound:true,motion:true,haptics:true}};
+let save=loadSave();let mode='learn',levelIndex=0,state=null,audioCtx=null,touchStart=null;
+function loadSave(){try{return{...structuredClone(defaultSave),...JSON.parse(localStorage.getItem(STORE)||'{}'),settings:{...defaultSave.settings,...(JSON.parse(localStorage.getItem(STORE)||'{}').settings||{})}}}catch{return structuredClone(defaultSave)}}
+function persist(){localStorage.setItem(STORE,JSON.stringify(save));$('#saveState').textContent='LOCAL // SAVED'}
+function dateKey(){const d=new Date();return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function dailyIndex(){return [...dateKey()].reduce((a,c)=>((a*31+c.charCodeAt(0))>>>0),7)%LEVELS.length}
+function levelForMode(){if(mode==='daily')return LEVELS[dailyIndex()];if(mode==='flow')return LEVELS[(levelIndex*7+11)%LEVELS.length];return LEVELS[levelIndex]}
+function freshState(level){return{level,p:[...level.startP],e:[...level.startE],queue:[],turns:0,history:[],complete:false}}
+function snapshot(){return{p:[...state.p],e:[...state.e],queue:[...state.queue],turns:state.turns}}
+function move(dir){if(!state||state.complete||!DIRS[dir])return;state.history.push(snapshot());const walls=new Set(state.level.walls.map(posKey));const oldP=state.p,oldE=state.e;state.p=stepPos(state.p,dir,walls);const ed=state.queue.length>=2?state.queue[state.queue.length-2]:null;if(ed)state.e=stepPos(state.e,ed,walls);state.queue.push(dir);state.turns++;save.moves++;persist();renderGame();feedback(dir,oldP,oldE);if(same(state.p,state.level.exitP)&&same(state.e,state.level.exitE))completeLevel()}
+function undo(){if(!state||!state.history.length||state.complete)return;const prev=state.history.pop();state.p=prev.p;state.e=prev.e;state.queue=prev.queue;state.turns=prev.turns;renderGame();tone(220,.035);haptic(8)}
+function restart(){if(!state)return;state=freshState(state.level);renderGame();tone(180,.05);showToast('timeline reset')}
+function feedback(dir,oldP,oldE){const blocked=same(oldP,state.p)&&same(oldE,state.e);if(blocked)$('#board').classList.add('bump');setTimeout(()=>$('#board').classList.remove('bump'),180);tone(blocked?130:300+Object.keys(DIRS).indexOf(dir)*55,.045);haptic(blocked?16:7)}
+function tone(freq,duration){if(!save.settings.sound)return;try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=freq;g.gain.setValueAtTime(.035,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration)}catch{}}
+function haptic(ms){if(save.settings.haptics&&navigator.vibrate)navigator.vibrate(ms)}
+function renderBoard(){const b=$('#board');b.innerHTML='';const wallSet=new Set(state.level.walls.map(posKey));for(let r=0;r<5;r++)for(let c=0;c<5;c++){const cell=document.createElement('div');cell.className='cell';cell.setAttribute('role','gridcell');const p=[r,c],key=posKey(p);if(wallSet.has(key))cell.classList.add('wall');if(same(p,state.level.exitP))cell.classList.add('player-exit');if(same(p,state.level.exitE))cell.classList.add('echo-exit');if(same(p,state.p)&&same(p,state.e)){const m=document.createElement('div');m.className='mote player overlap';m.setAttribute('aria-label','Player and echo overlap');cell.append(m)}else{if(same(p,state.p)){const m=document.createElement('div');m.className='mote player';m.setAttribute('aria-label','Player');cell.append(m)}if(same(p,state.e)){const m=document.createElement('div');m.className='mote echo';m.setAttribute('aria-label','Echo');cell.append(m)}}b.append(cell)}}
+function renderGame(){if(!state)return;renderBoard();const q=state.queue;$('#turnCount').textContent=state.turns;$('#queueOlder').textContent=q.length>=2?GLYPH[q[q.length-2]]:'·';$('#queueRecent').textContent=q.length>=1?GLYPH[q[q.length-1]]:'·';$('#nextEcho').textContent=q.length>=2?GLYPH[q[q.length-2]]:'·';$('#undoBtn').disabled=!state.history.length;$('#levelTitle').textContent=state.level.name;$('#levelPrompt').textContent=state.level.prompt;$('#levelHint').textContent=state.level.hint;$('#modeLabel').textContent=mode.toUpperCase();$('#levelEyebrow').textContent=mode==='daily'?`DAILY // ${dateKey()}`:mode==='flow'?`FLOW // RUN ${save.flowRun+1}`:`SHIFT ${String(state.level.id).padStart(2,'0')} / ${mode==='learn'?6:30}`}
+function startMode(nextMode,index=0){mode=nextMode;levelIndex=index;if(mode==='daily'){if(save.dailyDate!==dateKey()){save.dailyDate=dateKey();save.dailySolved=false;persist()}}state=freshState(levelForMode());showScreen('game');renderGame()}
+function showScreen(name){$('#homeScreen').classList.toggle('active',name==='home');$('#gameScreen').classList.toggle('active',name==='game');if(name==='home'){renderHome();state=null}}
+function completeLevel(){state.complete=true;const key=String(state.level.id),prev=save.best[key];save.solved[key]=true;if(!prev||state.turns<prev)save.best[key]=state.turns;if(mode==='daily'){save.dailyDate=dateKey();save.dailySolved=true}if(mode==='flow'){save.flowRun++;save.flowBest=Math.max(save.flowBest,save.flowRun)}persist();renderHome();$('#completionFlare').classList.add('show');setTimeout(()=>$('#completionFlare').classList.remove('show'),800);tone(660,.12);setTimeout(()=>tone(880,.14),90);haptic([20,40,20]);$('#resultMoves').textContent=state.turns;$('#resultBest').textContent=!prev||state.turns<prev?'New personal best.':`Best: ${prev} moves · Par line: ${state.level.par}`;$('#resultTitle').textContent=['Past you finally cooperated.','Timeline synchronized.','Clean echo. No notes.','Future you says thanks.'][state.level.id%4];$('#nextBtn').textContent=mode==='daily'?'BACK TO MODES':mode==='flow'?'KEEP FLOWING →':'NEXT SHIFT →';$('#resultModal').hidden=false}
+function nextLevel(){closeResult();if(mode==='daily'){showScreen('home');return}if(mode==='learn'){levelIndex=(levelIndex+1)%6}else if(mode==='journey'){levelIndex=(levelIndex+1)%30}else if(mode==='flow'){levelIndex++}state=freshState(levelForMode());renderGame()}
+function closeResult(){$('#resultModal').hidden=true}
+function renderHome(){const solved=Object.keys(save.solved).length,learn=LEVELS.slice(0,6).filter(l=>save.solved[l.id]).length;$('#learnMeta').textContent=`${learn} / 6 cleared`;$('#journeyMeta').textContent=`${solved} / 30 cleared`;$('#dailyMeta').textContent=save.dailyDate===dateKey()&&save.dailySolved?'cleared today':'unsolved today';$('#flowMeta').textContent=`best run ${save.flowBest}`;$('#statSolved').textContent=solved;$('#statMoves').textContent=save.moves;const bests=Object.values(save.best);$('#statBest').textContent=bests.length?Math.min(...bests):'—';$('#dailyBadge').textContent=new Intl.DateTimeFormat(undefined,{month:'short',day:'numeric'}).format(new Date()).toUpperCase()}
+function showToast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove('show'),1500)}
+async function shareResult(){const text=`ECHO SHIFT ${mode==='daily'?dateKey():'#'+state.level.id}\n${'■'.repeat(Math.min(10,state.turns))}${state.turns>10?'…':''}\n${state.turns} moves · your last move comes back.`;try{if(navigator.share)await navigator.share({title:'ECHO SHIFT',text});else{await navigator.clipboard.writeText(text);showToast('result copied')}}catch{}}
+function applySettings(){document.body.classList.toggle('motion-off',!save.settings.motion);$('#soundToggle').checked=save.settings.sound;$('#motionToggle').checked=save.settings.motion;$('#hapticsToggle').checked=save.settings.haptics}
+function openSettings(open=true){$('#settingsPanel').classList.toggle('open',open);$('#settingsPanel').setAttribute('aria-hidden',String(!open));$('#panelScrim').hidden=!open}
+$$('.mode-card').forEach(b=>b.addEventListener('click',()=>startMode(b.dataset.mode,b.dataset.mode==='journey'?Math.min(29,Object.keys(save.solved).length):0)));$$('[data-dir]').forEach(b=>b.addEventListener('click',()=>move(b.dataset.dir)));$('#undoBtn').addEventListener('click',undo);$('#restartBtn').addEventListener('click',restart);$('#backBtn').addEventListener('click',()=>{if(mode==='flow'){save.flowRun=0;persist()}showScreen('home')});$('#homeBtn').addEventListener('click',()=>showScreen('home'));$('#nextBtn').addEventListener('click',nextLevel);$('#shareBtn').addEventListener('click',shareResult);$('#resultHomeBtn').addEventListener('click',()=>{closeResult();showScreen('home')});$('#settingsBtn').addEventListener('click',()=>openSettings(true));$('#settingsClose').addEventListener('click',()=>openSettings(false));$('#panelScrim').addEventListener('click',()=>openSettings(false));
+[['soundToggle','sound'],['motionToggle','motion'],['hapticsToggle','haptics']].forEach(([id,key])=>$('#'+id).addEventListener('change',e=>{save.settings[key]=e.target.checked;persist();applySettings()}));$('#resetProgressBtn').addEventListener('click',()=>{if(confirm('Reset all local Echo Shift progress and bests?')){save=structuredClone(defaultSave);persist();applySettings();renderHome();openSettings(false);showToast('local progress reset')}});
+window.addEventListener('keydown',e=>{if(!$('#gameScreen').classList.contains('active')||!$('#resultModal').hidden)return;const map={ArrowUp:'U',w:'U',W:'U',ArrowDown:'D',s:'D',S:'D',ArrowLeft:'L',a:'L',A:'L',ArrowRight:'R',d:'R',D:'R',z:'UNDO',Z:'UNDO',r:'RESTART',R:'RESTART'};const cmd=map[e.key];if(cmd){e.preventDefault();cmd==='UNDO'?undo():cmd==='RESTART'?restart():move(cmd)}});
+const bw=$('#boardWrap');bw.addEventListener('touchstart',e=>{const t=e.changedTouches[0];touchStart=[t.clientX,t.clientY]},{passive:true});bw.addEventListener('touchend',e=>{if(!touchStart)return;const t=e.changedTouches[0],dx=t.clientX-touchStart[0],dy=t.clientY-touchStart[1];touchStart=null;if(Math.max(Math.abs(dx),Math.abs(dy))<28)return;move(Math.abs(dx)>Math.abs(dy)?(dx>0?'R':'L'):(dy>0?'D':'U'))},{passive:true});
+applySettings();renderHome();if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
