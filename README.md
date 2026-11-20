@@ -1,48 +1,45 @@
 # ECHO SHIFT
 
-> Your last move comes back.
+**Play now:** https://www.popdo.xyz/
 
-A minimalist solo puzzle game where the player moves immediately and an echo repeats the player's direction from two turns earlier.
+A free, offline-first 5 × 5 puzzle game. The bright mote follows your current input; the cyan echo repeats the same direction **exactly two turns later**, from its own location. Get both to their matching exits.
 
-## Current state
+## Game modes
 
-This repository currently contains the initial launch/teaser page:
+- **Learn:** six short lessons, resuming at the next uncompleted lesson.
+- **Journey:** 30 levels with selectable unlocked stages and saved personal bests.
+- **Daily Shift:** a reproducible puzzle based on the device's local date.
+- **Flow:** continuously cycle levels and chase your longest run.
 
-- responsive neon 5×5 board preview
-- animated delayed-echo loop
-- keyboard/touch-forward visual language
-- reduced-motion support
-- installable-web-app manifest scaffold
-- offline app-shell service worker
-- hookable CTA elements via `data-hook` attributes
+## Controls
 
-## Launch page hooks
+- Desktop: arrow keys or WASD; Z undo; R restart.
+- Mobile: swipe the board or use the visible directional pad.
+- Undo and restart are always available before completion.
+- Settings: sound, haptics and motion.
+- Local progress and scores save to this browser; no login or analytics.
 
-- `data-hook="play-teaser"` — future playable demo entry
-- `data-hook="notify"` — future waitlist/email capture
+## Gameplay contract
+
+For each player input at turn `t`:
+1. The player attempts to move immediately.
+2. The echo attempts the input from `t-2`, or remains stationary for the first two turns.
+3. Both movement attempts obey board limits and walls independently.
+4. Even a blocked input advances the queue.
+5. Completion requires the player and echo simultaneously on their designated exits.
 
 ## Run locally
 
-Serve the directory with any static HTTP server. For example:
+Serve the repository as static files with a local HTTP server, e.g. `python3 -m http.server 8000`. Open http://localhost:8000/. No build or external API keys are necessary.
 
-```bash
-npx serve .
-```
+## Deployment and SEO
 
-Service workers require HTTP/HTTPS rather than opening `index.html` directly from disk.
+- Production: `www.popdo.xyz` (canonical).
+- Hosting: Vercel, project `echo-shift`, team `kankar`, GitHub `main`.
+- `robots.txt`, `sitemap.xml`, metadata, Open Graph, PNG social art and VideoGame JSON-LD are present.
+- See [SEO.md](SEO.md) for Google/Bing Search Console submission and further launch steps.
+- See [PLAN.md](PLAN.md) and [AGENTS.md](AGENTS.md) for product scope and engineering rules.
 
-## Next build slice
+## Known next-level quality work
 
-1. Move game rules into a deterministic TypeScript state machine.
-2. Implement the real two-turn delayed input queue.
-3. Add undo/restart and keyboard/swipe controls.
-4. Ship six tutorial levels and verified solution fixtures.
-5. Add 192px/512px production icons and complete PWA installability checks.
-
-## Product principles
-
-- no account required
-- offline-first play
-- no streak punishment
-- no forced notifications
-- one-more-puzzle energy
+The game is playable today, but puzzle difficulty still needs hands-on tuning and testing across physical mobile devices and screen readers. PWA/offline support should be verified per browser. There is no backend, account, leaderboard, or analytics.
