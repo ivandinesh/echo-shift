@@ -2,18 +2,37 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <meta name="theme-color" content="#07090d" />
-  <meta name="description" content="ECHO SHIFT — a minimalist delayed-move puzzle game. Your last move comes back." />
+  <meta name="description" content="Play ECHO SHIFT free: a clever offline puzzle game where your moves return two turns later. Solve 30 levels, daily challenges, and endless Flow. No sign-up." />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <meta name="author" content="ECHO SHIFT" />
+  <meta name="application-name" content="ECHO SHIFT" />
+  <meta name="color-scheme" content="dark" />
+  <link rel="canonical" href="https://www.popdo.xyz/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ECHO SHIFT" />
+  <meta property="og:title" content="ECHO SHIFT — Play the free two-turn echo puzzle game" />
+  <meta property="og:description" content="Your moves come back two turns later. Play 30 brain-bending puzzles, Daily Shift and endless Flow. Free, private, and playable offline." />
+  <meta property="og:url" content="https://www.popdo.xyz/" />
+  <meta property="og:image" content="https://www.popdo.xyz/social-card.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="ECHO SHIFT — glowing lime and cyan motes on a dark puzzle grid. Your last move comes back." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ECHO SHIFT — Your last move comes back" />
+  <meta name="twitter:description" content="Free offline puzzle game. One move. Two timelines. Play 30 levels and a daily challenge." />
+  <meta name="twitter:image" content="https://www.popdo.xyz/social-card.png" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoGame","name":"ECHO SHIFT","url":"https://www.popdo.xyz/","description":"Free single-player browser puzzle game. Move a bright mote while your echo repeats your inputs exactly two turns later. Play 30 levels, Daily Shift and Flow mode.","genre":["Puzzle","Casual"],"gamePlatform":["Web browser","iOS web app","Android web app","Desktop browser"],"applicationCategory":"Game","operatingSystem":"Any modern browser","inLanguage":"en","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/InStock"},"playMode":"SinglePlayer","image":"https://www.popdo.xyz/social-card.png"}</script>
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="ECHO SHIFT" />
   <link rel="manifest" href="/manifest.webmanifest" />
   <link rel="icon" href="/icon.svg" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="/icon-192.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
   <link rel="stylesheet" href="/styles.css" />
   <link rel="stylesheet" href="/motion.css" />
-  <title>ECHO SHIFT — Your last move comes back.</title>
+  <title>ECHO SHIFT — Free Offline Echo Puzzle Game | Play Now</title>
 </head>
 <body>
   <div class="ambient" aria-hidden="true"></div>
@@ -25,12 +44,13 @@
     <main>
       <section class="screen home-screen active" id="homeScreen" aria-labelledby="homeTitle">
         <div class="home-hero"><div><p class="kicker">ONE INPUT. TWO TIMELINES.</p><h1 id="homeTitle">Your last move<br><span>comes back.</span></h1><p class="hero-copy">Move now. Your echo repeats what you did two turns ago. Guide both motes home without getting outplayed by your past self.</p></div><div class="hero-orbit" aria-hidden="true"><div class="orbit-grid"></div><div class="orbit-player"></div><div class="orbit-echo"></div><div class="orbit-ring ring-a"></div><div class="orbit-ring ring-b"></div></div></div>
-        <div class="mode-grid" role="list" aria-label="Game modes">
-          <button class="mode-card featured" data-mode="learn" role="listitem"><span class="mode-index">01</span><span class="mode-badge">START HERE</span><h2>Learn</h2><p>Six tiny shifts. Understand the delay by playing, not reading.</p><span class="mode-meta" id="learnMeta">0 / 6 cleared</span></button>
-          <button class="mode-card" data-mode="journey" role="listitem"><span class="mode-index">02</span><h2>Journey</h2><p>Thirty verified puzzles that bend the same simple rule.</p><span class="mode-meta" id="journeyMeta">0 / 30 cleared</span></button>
-          <button class="mode-card daily" data-mode="daily" role="listitem"><span class="mode-index">03</span><span class="mode-badge" id="dailyBadge">TODAY</span><h2>Daily Shift</h2><p>Same puzzle for the whole day. No streak guilt. Just a clean solve.</p><span class="mode-meta" id="dailyMeta">unsolved today</span></button>
-          <button class="mode-card" data-mode="flow" role="listitem"><span class="mode-index">04</span><h2>Flow</h2><p>An endless local shuffle. Clear one, immediately get the next.</p><span class="mode-meta" id="flowMeta">best run 0</span></button>
+        <div class="mode-grid" aria-label="Game modes">
+          <button class="mode-card featured" data-mode="learn"><span class="mode-index">01</span><span class="mode-badge">START HERE</span><h2>Learn</h2><p>Six tiny shifts. Understand the delay by playing, not reading.</p><span class="mode-meta" id="learnMeta">0 / 6 cleared</span></button>
+          <button class="mode-card" data-mode="journey"><span class="mode-index">02</span><h2>Journey</h2><p>Thirty verified puzzles that bend the same simple rule.</p><span class="mode-meta" id="journeyMeta">0 / 30 cleared</span></button>
+          <button class="mode-card daily" data-mode="daily"><span class="mode-index">03</span><span class="mode-badge" id="dailyBadge">TODAY</span><h2>Daily Shift</h2><p>Same puzzle for the whole day. No streak guilt. Just a clean solve.</p><span class="mode-meta" id="dailyMeta">unsolved today</span></button>
+          <button class="mode-card" data-mode="flow"><span class="mode-index">04</span><h2>Flow</h2><p>An endless local shuffle. Clear one, immediately get the next.</p><span class="mode-meta" id="flowMeta">best run 0</span></button>
         </div>
+        <section class="seo-intro" aria-label="How to play ECHO SHIFT"><h2>A free puzzle game about your past moves</h2><p>Play ECHO SHIFT right in your browser. Each arrow moves your bright mote instantly, while your cyan echo follows the direction you chose exactly two turns ago. Guide both to their matching exits through walls and tight spaces. Start with six short lessons, explore 30 Journey puzzles, try a fresh Daily Shift, or play endless Flow. It’s free, solo, no-account and designed to work offline after your first visit.</p><h3>How to play</h3><p>Use arrow keys or WASD on a computer. On a phone, swipe the board or tap the direction pad. Watch the NEXT ECHO indicator to see your past input return. You can undo or restart any time. There is no timer and no streak pressure.</p><h3>Frequently asked questions</h3><details><summary>Is ECHO SHIFT free?</summary><p>Yes. The full browser puzzle game is free to play, with no sign-up required.</p></details><details><summary>Can I play offline?</summary><p>Yes. After your first online visit loads the game, the web app caches its assets for offline play on the same device and browser.</p></details><details><summary>How does the two-turn echo work?</summary><p>Your bright mote follows the input you make now. Your ghost mote repeats the input from two turns earlier, independently from its own position. Both motes must reach their matching exits at the same time.</p></details></section>
         <div class="home-stats" aria-label="Local player stats"><div><strong id="statSolved">0</strong><span>shifts cleared</span></div><div><strong id="statMoves">0</strong><span>moves played</span></div><div><strong id="statBest">—</strong><span>best solve</span></div></div>
       </section>
       <section class="screen game-screen" id="gameScreen" aria-labelledby="levelTitle">
@@ -38,7 +58,7 @@
         <div class="game-layout">
           <aside class="game-info"><p class="eyebrow" id="levelEyebrow">SHIFT 01 / 30</p><h2 id="levelPrompt">Move the bright mote. Your echo waits two turns.</h2><p id="levelHint">Use arrows, WASD, swipe, or the controls below.</p><div class="echo-queue" aria-label="Echo timing preview"><div><span>2 AGO</span><strong id="queueOlder">·</strong></div><div><span>1 AGO</span><strong id="queueRecent">·</strong></div><div class="next"><span>NEXT ECHO</span><strong id="nextEcho">·</strong></div></div><div class="legend"><span><i class="legend-dot player-dot"></i>you</span><span><i class="legend-dot echo-dot"></i>echo</span><span><i class="legend-exit"></i>exits</span></div></aside>
           <div class="board-wrap" id="boardWrap"><div id="board" class="board" role="grid" aria-label="Echo Shift game board"></div><div class="completion-flare" id="completionFlare" aria-hidden="true"></div></div>
-          <aside class="game-actions"><div class="move-pad" aria-label="Move controls"><button data-dir="U" aria-label="Move up">↑</button><button data-dir="L" aria-label="Move left">←</button><button data-dir="D" aria-label="Move down">↓</button><button data-dir="R" aria-label="Move right">→</button></div><div class="utility-actions"><button id="undoBtn">↶ Undo</button><button id="restartBtn">↺ Restart</button></div><p class="input-note">WASD · ARROWS · SWIPE</p></aside>
+          <aside class="game-actions"><div class="move-pad" aria-label="Move controls"><button data-dir="U" aria-label="Move up">↑</button><button data-dir="L" aria-label="Move left">←</button><button data-dir="D" aria-label="Move down">↓</button><button data-dir="R" aria-label="Move right">→</button></div><div class="utility-actions"><button id="undoBtn">↶ Undo</button><button id="restartBtn">↺ Restart</button></div><p class="input-note">WASD · ARROWS · SWIPE · Z UNDO · R RESTART</p></aside>
         </div>
       </section>
     </main>
