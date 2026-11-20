@@ -15,7 +15,8 @@
   <meta property="og:title" content="ECHO SHIFT — Play the free two-turn echo puzzle game" />
   <meta property="og:description" content="Your moves come back two turns later. Play 30 brain-bending puzzles, Daily Shift and endless Flow. Free, private, and playable offline." />
   <meta property="og:url" content="https://www.popdo.xyz/" />
-  <meta property="og:image" content="https://www.popdo.xyz/social-card.png" />
+  <meta property="og:image" content="https://www.popdo.xyz/social-card.svg" />
+  <meta property="og:image:type" content="image/svg+xml" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="ECHO SHIFT — glowing lime and cyan motes on a dark puzzle grid. Your last move comes back." />
@@ -50,6 +51,7 @@
           <button class="mode-card daily" data-mode="daily"><span class="mode-index">03</span><span class="mode-badge" id="dailyBadge">TODAY</span><h2>Daily Shift</h2><p>Same puzzle for the whole day. No streak guilt. Just a clean solve.</p><span class="mode-meta" id="dailyMeta">unsolved today</span></button>
           <button class="mode-card" data-mode="flow"><span class="mode-index">04</span><h2>Flow</h2><p>An endless local shuffle. Clear one, immediately get the next.</p><span class="mode-meta" id="flowMeta">best run 0</span></button>
         </div>
+        <section class="level-library" id="levelLibrary" aria-labelledby="libraryTitle" hidden><div class="library-head"><h2 id="libraryTitle">Journey / Choose a shift</h2><button id="closeLibrary" class="secondary-button" type="button">CLOSE</button></div><p>Replay any unlocked puzzle. Your progress stays on this device.</p><div id="levelPicker" class="level-picker" aria-label="Journey levels"></div></section>
         <section class="seo-intro" aria-label="How to play ECHO SHIFT"><h2>A free puzzle game about your past moves</h2><p>Play ECHO SHIFT right in your browser. Each arrow moves your bright mote instantly, while your cyan echo follows the direction you chose exactly two turns ago. Guide both to their matching exits through walls and tight spaces. Start with six short lessons, explore 30 Journey puzzles, try a fresh Daily Shift, or play endless Flow. It’s free, solo, no-account and designed to work offline after your first visit.</p><h3>How to play</h3><p>Use arrow keys or WASD on a computer. On a phone, swipe the board or tap the direction pad. Watch the NEXT ECHO indicator to see your past input return. You can undo or restart any time. There is no timer and no streak pressure.</p><h3>Frequently asked questions</h3><details><summary>Is ECHO SHIFT free?</summary><p>Yes. The full browser puzzle game is free to play, with no sign-up required.</p></details><details><summary>Can I play offline?</summary><p>Yes. After your first online visit loads the game, the web app caches its assets for offline play on the same device and browser.</p></details><details><summary>How does the two-turn echo work?</summary><p>Your bright mote follows the input you make now. Your ghost mote repeats the input from two turns earlier, independently from its own position. Both motes must reach their matching exits at the same time.</p></details></section>
         <div class="home-stats" aria-label="Local player stats"><div><strong id="statSolved">0</strong><span>shifts cleared</span></div><div><strong id="statMoves">0</strong><span>moves played</span></div><div><strong id="statBest">—</strong><span>best solve</span></div></div>
       </section>
